@@ -110,6 +110,18 @@ def pca(X):
     print eig_pairs
     '''
 
+    '''
+    And about the negative eigenvalues, it is just a matter of eigh. 
+    As eigenvalues shows the variance in a direction, 
+    we care about absolute value but if we change a sign, 
+    we also have to change the "direcction" (eigenvector). 
+    You can make this multiplying negative eigenvalues and their corresponding eigenvectors with -1.0
+    '''
+    # http://stackoverflow.com/questions/22885100/principal-component-analysis-in-python-analytical-mistake
+    s = np.where(eig_vals < 0)
+    eig_vals[s] = eig_vals[s] * -1.0
+    eig_vecs[:,s] = eig_vecs[:,s] * -1.0
+
     D = eig_vals
     V = eig_vecs
     print 'Eigenvalues D'
