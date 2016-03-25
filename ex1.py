@@ -12,6 +12,30 @@ def create_data(x1, x2, x3):
     X = np.hstack((x1, x2, x3, x4, x5, x6, x7, x8, x9))
     return X
 
+
+def insertionSort(eigenvalues, eigenvectors):
+    for index in range(1,len(eigenvalues)):
+
+        currenteigenvalue = eigenvalues[index]
+        currenteigenvector = eigenvectors[index]
+        position = index
+
+        while position>0 and eigenvalues[position-1]>currenteigenvalue:
+            eigenvalues[position]=eigenvalues[position-1]
+            eigenvectors[position] = eigenvectors[position-1]
+            position = position-1
+
+        eigenvalues[position]=currenteigenvalue
+        eigenvectors[position]=currenteigenvector
+
+    return eigenvalues, eigenvectors
+
+'''
+eigenvalues = [54,26,93,17,77,31,44,55,20]
+insertionSort(eigenvalues)
+print(eigenvalues)
+'''
+
 def pca(X):
     '''
     # PCA step by step
@@ -58,18 +82,50 @@ def pca(X):
     '''
 
     S = np.cov(np.transpose(X_normalized))
+    '''
     print 'Convariance Matrix I calculated'
     print S
     print S.shape
     print '\n'
+    '''
 
-    [D,V] = np.linalg.eig(S)
-    #print 'Eigenvalues D'
-    #print D
-    #print D.shape
-    #print 'Eigenvectors V'
-    #print V
-    #print V.shape
+    [eig_vals, eig_vecs] = np.linalg.eig(S)
+
+    # Make a list of (eigenvalue, eigenvector) tuples
+
+
+    '''
+    eig_pairs = [(np.abs(eig_vals[i]), eig_vecs[:,i]) for i in range(len(eig_vals))]
+
+    # Sort the (eigenvalue, eigenvector) tuples from high to low
+    eig_pairs.sort()
+    eig_pairs.reverse()
+
+    # Visually confirm that the list is correctly sorted by decreasing eigenvalues
+    for i in eig_pairs:
+        print(i[0])
+
+
+    print 'eig_pairs'
+    print eig_pairs
+    '''
+
+    D = eig_vals
+    V = eig_vecs
+    print 'Eigenvalues D'
+    print D
+    print D.shape
+    print 'Eigenvectors V'
+    print V
+    print V.shape
+
+    [D, V] = insertionSort(D, V)
+    print 'Sorted Eigenvalues D'
+    print D
+    print D.shape
+    print 'Sorted Eigenvectors V'
+    print V
+    print V.shape    
 
     ####################################################################
     # here V is the matrix containing all the eigenvectors, D is the
@@ -81,9 +137,9 @@ def s_pca(X):
     from sklearn.decomposition import PCA
     pca = PCA(n_components = 9)
     pca.fit(X)
-    print 'Scikit learn convariance matrix'
-    print pca.get_covariance()
-    print '\n'
+    '''
+    print 'Scikit learn convariance matrix', pca.get_covariance(), '\n'
+    '''
     return pca
 
 def main():
@@ -104,7 +160,7 @@ def main():
     ####################################################################
     pca(X)
     result = s_pca(X)
-    '''
+    
     print result.explained_variance_ratio_
     first_pc = result.components_[0]
     second_pc = result.components_[1]
@@ -124,6 +180,13 @@ def main():
     print seventh_pc
     print eighth_pc
     print ninth_pc
+    '''
+    transformed_data = result.transform(X)
+    for ii, jj in zip(transformed_data, X):
+        plt.scatter(first_pc[0]*ii[0], first_pc[1]*ii[0], color = 'r')
+        plt.scatter(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
+        plt.scatter(jj[0],jj[1], color='b')
+    plt.show()    
     '''
 
 
