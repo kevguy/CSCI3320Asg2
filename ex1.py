@@ -27,12 +27,64 @@ def pca(X):
     # PCA, if you are interested, you can google SVD.
     # YOUR CODE HERE!
     '''
+    
+    # Sum all the elements column by column
+    sum_X  = [[ sum(x) for x in zip(*X) ]]
+    sum_X = np.asarray(sum_X)
+    # the following lines do the almost the exact same thing
+    # sum_X_np = np.sum(X, axis = 0)
+    '''
+    print 'sum_X'
+    print sum_X
+    print sum_X.shape
+    '''
+
+    # Calculate the mean vector
+    mean_vector = sum_X / 1000.0
+    '''
+    print 'mean_vector'
+    print mean_vector
+    print mean_vector.shape
+    '''
+
+    # Normalize the whole thing
+    thousand_ones = np.ones((1000, 1))
+    X_normalized = np.dot(thousand_ones, mean_vector)
+    X_normalized = np.subtract(X, X_normalized)
+    '''
+    print 'X_normalized'
+    print X_normalized
+    print X_normalized.shape
+    '''
+
+    S = np.cov(np.transpose(X_normalized))
+    print 'Convariance Matrix I calculated'
+    print S
+    print S.shape
+    print '\n'
+
+    [D,V] = np.linalg.eig(S)
+    #print 'Eigenvalues D'
+    #print D
+    #print D.shape
+    #print 'Eigenvectors V'
+    #print V
+    #print V.shape
 
     ####################################################################
     # here V is the matrix containing all the eigenvectors, D is the
     # column vector containing all the corresponding eigenvalues.
     return [V, D]
 
+
+def s_pca(X):
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components = 9)
+    pca.fit(X)
+    print 'Scikit learn convariance matrix'
+    print pca.get_covariance()
+    print '\n'
+    return pca
 
 def main():
     N = 1000
@@ -50,6 +102,30 @@ def main():
     # YOUR CODE HERE!
 
     ####################################################################
+    pca(X)
+    result = s_pca(X)
+    '''
+    print result.explained_variance_ratio_
+    first_pc = result.components_[0]
+    second_pc = result.components_[1]
+    third_pc = result.components_[2]
+    fourth_pc = result.components_[3]
+    fifth_pc = result.components_[4]
+    sixth_pc = result.components_[5]
+    seventh_pc = result.components_[6]
+    eighth_pc = result.components_[7]
+    ninth_pc = result.components_[8]
+    print first_pc
+    print second_pc
+    print third_pc
+    print fourth_pc
+    print fifth_pc
+    print sixth_pc
+    print seventh_pc
+    print eighth_pc
+    print ninth_pc
+    '''
+
 
 
 if __name__ == '__main__':
