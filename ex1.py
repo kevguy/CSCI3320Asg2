@@ -32,29 +32,15 @@ def insertionSort(eigenvalues, eigenvectors):
 
 def POV_arr(eigenvalues):
     arr = []
-    for i in range(0, len(eigenvalues)):
-        arr.append(calculate_POV(i, eigenvalues))
-    
-    return arr
-
-
-def calculate_POV(idx, eigenvalues):
     sum = 0
     for i in range(0, len(eigenvalues)):
-        sum = sum + eigenvalues[i]
-    print 'sum: ', sum
+        sum += eigenvalues[i]
 
-    upper = 0
-    for i in range(0, idx+1):
-        upper = upper + eigenvalues[i]
-
-    return (upper/sum)
-
-'''
-eigenvalues = [54,26,93,17,77,31,44,55,20]
-insertionSort(eigenvalues)
-print(eigenvalues)
-'''
+    cumulate = 0
+    for i in range(0, len(eigenvalues)):
+        cumulate += eigenvalues[i]
+        arr.append(cumulate / sum)
+    return arr
 
 def pca(X):
     '''
@@ -113,86 +99,109 @@ def pca(X):
 
     # Make a list of (eigenvalue, eigenvector) tuples
 
-
-    '''
-    eig_pairs = [(np.abs(eig_vals[i]), eig_vecs[:,i]) for i in range(len(eig_vals))]
-
-    # Sort the (eigenvalue, eigenvector) tuples from high to low
-    eig_pairs.sort()
-    eig_pairs.reverse()
-
-    # Visually confirm that the list is correctly sorted by decreasing eigenvalues
-    for i in eig_pairs:
-        print(i[0])
-
-
-    print 'eig_pairs'
-    print eig_pairs
-    '''
-
     '''
     And about the negative eigenvalues, it is just a matter of eigh. 
     As eigenvalues shows the variance in a direction, 
     we care about absolute value but if we change a sign, 
     we also have to change the "direcction" (eigenvector). 
     You can make this multiplying negative eigenvalues and their corresponding eigenvectors with -1.0
+    
+    Refer to : http://stackoverflow.com/questions/22885100/principal-component-analysis-in-python-analytical-mistake
     '''
-    # http://stackoverflow.com/questions/22885100/principal-component-analysis-in-python-analytical-mistake
     s = np.where(eig_vals < 0)
     eig_vals[s] = eig_vals[s] * -1.0
     eig_vecs[:,s] = eig_vecs[:,s] * -1.0
 
     D = eig_vals
     V = eig_vecs
+    '''
     print 'Eigenvalues D'
-    print D
     print D.shape
+    print D
     print 'Eigenvectors V'
-    print V
     print V.shape
+    print V
+    '''
 
     [D, V] = insertionSort(D, V)
+    '''
     print 'Sorted Eigenvalues D'
-    print D
     print D.shape
+    print D
     print 'Sorted Eigenvectors V'
+    print V.shape
     print V
-    print V.shape    
+    '''    
 
     ####################################################################
     # here V is the matrix containing all the eigenvectors, D is the
     # column vector containing all the corresponding eigenvalues.
 
+    X = []
+    for i in range(0, len(D)):
+        X.append(i + 1)
 
+    plt.plot(X, D, color= 'b')
+    '''
     for i in range(0, len(D)):
         print i
         plt.plot(i+1, D[i])
         plt.scatter(i+1, D[i], color = 'b')
-        #plt.scatter(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
-        #plt.scatter(jj[0],jj[1], color='b')
+    '''
+    plt.title('Task A: POV: Eigenvalues')
+    plt.ylabel('Eigenvalues')
+    plt.xlabel('k')
     plt.show()
 
-    X = []
+
     POV = POV_arr(D)
     print 'POV'
     print POV
     print '\n'
-    for i in range(0, len(D)):
-        X.append(i+1)
     plt.plot(X, POV, marker = 'o', color='b', linestyle='-')
+    plt.title('Task A: Proportion of variance(POV)')
+    plt.ylabel('Prop. of var')
+    plt.xlabel('k')
     plt.show()
 
 
     return [V, D]
 
 
-def s_pca(X):
+def scikit_pca(X):
     from sklearn.decomposition import PCA
     pca = PCA(n_components = 9)
     pca.fit(X)
     '''
-    print 'Scikit learn convariance matrix', pca.get_covariance(), '\n'
+    print 'Scikit learn covariance matrix', pca.get_covariance(), '\n'
     '''
+
+    covariance_matrix = pca.get_covariance()
+    [eig_vals, eig_vecs] = np.linalg.eig(covariance_matrix)
+
+    X = []
+    for i in range(0, len(eig_vals)):
+        X.append(i + 1)
+
+    plt.plot(X, eig_vals, color= 'r')
+    plt.title('Task A: Eigenvalues using sklearn')
+    plt.ylabel('Eigenvalues')
+    plt.xlabel('k')
+    plt.show()
+
+
+    POV = POV_arr(eig_vals)
+    print 'POV using sklearn'
+    print POV
+    print '\n'
+    plt.plot(X, POV, marker = 'o', color='r', linestyle='-')
+    plt.title('Task A: Proportyion of variance (POV) using sklearn')
+    plt.ylabel('Prop. of var')
+    plt.xlabel('k')
+    plt.show()
+
+
+
     return pca
 
 def main():
@@ -212,40 +221,7 @@ def main():
 
     ####################################################################
     pca(X)
-    result = s_pca(X)
-    
-    print 'ratio'
-    print result.explained_variance_ratio_
-    first_pc = result.components_[0]
-    second_pc = result.components_[1]
-    third_pc = result.components_[2]
-    fourth_pc = result.components_[3]
-    fifth_pc = result.components_[4]
-    sixth_pc = result.components_[5]
-    seventh_pc = result.components_[6]
-    eighth_pc = result.components_[7]
-    ninth_pc = result.components_[8]
-    print first_pc
-    print second_pc
-    print third_pc
-    print fourth_pc
-    print fifth_pc
-    print sixth_pc
-    print seventh_pc
-    print eighth_pc
-    print ninth_pc
-    
-    '''
-    transformed_data = result.transform(X)
-    for ii, jj in zip(transformed_data, X):
-        plt.scatter(first_pc[0]*ii[0], first_pc[1]*ii[0], color = 'r')
-        plt.scatter(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
-        plt.scatter(jj[0],jj[1], color='b')
-        plt.plot(first_pc[0]*ii[0], first_pc[1]*ii[0], color = 'r')
-        plt.plot(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
-        plt.plot(jj[0],jj[1], color='b')
-    plt.show()
-    '''
+    scikit_pca(X)
 
 
 if __name__ == '__main__':
