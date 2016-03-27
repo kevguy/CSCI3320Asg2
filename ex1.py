@@ -20,7 +20,7 @@ def insertionSort(eigenvalues, eigenvectors):
         currenteigenvector = eigenvectors[index]
         position = index
 
-        while position>0 and eigenvalues[position-1]>currenteigenvalue:
+        while position>0 and eigenvalues[position-1]<currenteigenvalue:
             eigenvalues[position]=eigenvalues[position-1]
             eigenvectors[position] = eigenvectors[position-1]
             position = position-1
@@ -29,6 +29,26 @@ def insertionSort(eigenvalues, eigenvectors):
         eigenvectors[position]=currenteigenvector
 
     return eigenvalues, eigenvectors
+
+def POV_arr(eigenvalues):
+    arr = []
+    for i in range(0, len(eigenvalues)):
+        arr.append(calculate_POV(i, eigenvalues))
+    
+    return arr
+
+
+def calculate_POV(idx, eigenvalues):
+    sum = 0
+    for i in range(0, len(eigenvalues)):
+        sum = sum + eigenvalues[i]
+    print 'sum: ', sum
+
+    upper = 0
+    for i in range(0, idx+1):
+        upper = upper + eigenvalues[i]
+
+    return (upper/sum)
 
 '''
 eigenvalues = [54,26,93,17,77,31,44,55,20]
@@ -142,6 +162,27 @@ def pca(X):
     ####################################################################
     # here V is the matrix containing all the eigenvectors, D is the
     # column vector containing all the corresponding eigenvalues.
+
+
+    for i in range(0, len(D)):
+        print i
+        plt.plot(i+1, D[i])
+        plt.scatter(i+1, D[i], color = 'b')
+        #plt.scatter(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
+        #plt.scatter(jj[0],jj[1], color='b')
+    plt.show()
+
+    X = []
+    POV = POV_arr(D)
+    print 'POV'
+    print POV
+    print '\n'
+    for i in range(0, len(D)):
+        X.append(i+1)
+    plt.plot(X, POV, marker = 'o', color='b', linestyle='-')
+    plt.show()
+
+
     return [V, D]
 
 
@@ -173,6 +214,7 @@ def main():
     pca(X)
     result = s_pca(X)
     
+    print 'ratio'
     print result.explained_variance_ratio_
     first_pc = result.components_[0]
     second_pc = result.components_[1]
@@ -192,15 +234,18 @@ def main():
     print seventh_pc
     print eighth_pc
     print ninth_pc
+    
     '''
     transformed_data = result.transform(X)
     for ii, jj in zip(transformed_data, X):
         plt.scatter(first_pc[0]*ii[0], first_pc[1]*ii[0], color = 'r')
         plt.scatter(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
         plt.scatter(jj[0],jj[1], color='b')
-    plt.show()    
+        plt.plot(first_pc[0]*ii[0], first_pc[1]*ii[0], color = 'r')
+        plt.plot(second_pc[0]*ii[1], second_pc[1]*ii[1], color = 'c')
+        plt.plot(jj[0],jj[1], color='b')
+    plt.show()
     '''
-
 
 
 if __name__ == '__main__':
