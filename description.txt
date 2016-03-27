@@ -1,0 +1,5 @@
+No. of dimensions need to be reserved is 62.
+
+The eigenvalues in PCA tells us how much variance can be explained by its associated eigenvector. Therefore, the highest eigenvalue indicates the highest variance in the data was observed in the direction of its eigenvector. That means, if we take all eigenvectors together, we can explain all the variance in the data sample. Therefore, we can get relative numbers by first summing up all eigenvalues and then divide an eigenvalue by that sum to get the POV. 
+
+First I select number of components for PCA so 100% of variance can be preserved.  I tried 150 and numbers larger than 150, both gave 62 as the answer. That means 62 isare the minimum number of eigenvectors needed to explain more than 90% of the variance.
