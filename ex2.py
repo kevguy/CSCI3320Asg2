@@ -93,9 +93,8 @@ def main():
     ####################################################################
     """ 1. do the PCA on matrix X """
     n_components = 150
-    print "Extracting the top", n_components, "eigenfaces from ",  X.shape, " faces"
+    print "Extracting the top", n_components, "eigenfaces from ",  X.shape[0], " faces"
     t0 = time()
-    #pca = RandomizedPCA(n_components=n_components, whiten=True).fit(X)
     pca = PCA(n_components=n_components).fit(X)
     print "done in %0.3fs" % (time() - t0)
 
@@ -108,6 +107,10 @@ def main():
     for i in range(n_row * n_col):
         plt.subplot(n_row, n_col, i + 1)
         plt.imshow(eigenfaces[i].reshape(28,28), cmap=plt.cm.gray)
+        title_text = 'Eigenvalue ' + str(i + 1)
+        plt.title(title_text, size=12)
+        plt.xticks(())
+        plt.yticks(())
 
     plt.show()
 
@@ -139,14 +142,17 @@ def main():
     X = []
     for i in range(0, len(POV)):
         X.append(i+1)
-    plt.plot(X, POV, marker='o',color='b',linestyle='-')
+    #plt.plot(X, POV, marker='o',color='b',linestyle='-')
+    plt.plot(X, POV, color='b', linestyle='-')
+    plt.title('Task B: Proportion of variance(POV)')
+    plt.ylabel('Prop. of var')
+    plt.xlabel('k')
     plt.show()
-    
     for i in range(0, len(POV)):
         if POV[i] > 0.9:
             dimen_idx = i + 1
             break
-    print 'dimen_idx: ', dimen_idx
+    print 'No. of dimensions need to be reserved: ', dimen_idx
     
 
 
